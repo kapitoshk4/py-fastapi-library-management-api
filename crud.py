@@ -1,20 +1,24 @@
+from typing import List, Optional
+
 from sqlalchemy.orm import Session
 
 from db.models import DBAuthor, DBBook
 from schemas import AuthorCreate, BookCreate
 
 
-def get_authors(db: Session, skip: int = 0, limit: int = 10):
+def get_authors(db: Session,
+                skip: int = 0,
+                limit: int = 10) -> List[DBAuthor]:
     return db.query(DBAuthor).offset(skip).limit(limit).all()
 
 
-def get_author(db: Session, author_id: int):
+def get_author(db: Session, author_id: int) -> Optional[DBAuthor]:
     return db.query(DBAuthor).filter(
         DBAuthor.id == author_id
     ).first()
 
 
-def create_author(db: Session, author: AuthorCreate):
+def create_author(db: Session, author: AuthorCreate) -> DBAuthor:
     db_author = DBAuthor(
         name=author.name,
         bio=author.bio,
@@ -26,21 +30,24 @@ def create_author(db: Session, author: AuthorCreate):
     return db_author
 
 
-def get_books(db: Session, skip: int = 0, limit: int = 10):
+def get_books(db: Session,
+              skip: int = 0,
+              limit: int = 10) -> List[DBBook]:
     return db.query(DBBook).offset(skip).limit(limit).all()
 
 
 def get_books_by_author_id(db: Session,
                            author_id: int,
                            skip: int = 0,
-                           limit: int = 10
-                           ):
+                           limit: int = 10) -> List[DBBook]:
     return db.query(DBBook).filter(
         DBBook.author_id == author_id
     ).offset(skip).limit(limit).all()
 
 
-def create_book(db: Session, book: BookCreate, author_id: int):
+def create_book(db: Session,
+                book: BookCreate,
+                author_id: int) -> DBBook:
     db_book = DBBook(
         **book.dict(),
         author_id=author_id
